@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Juan Calderón" />
+    <meta
+      name="description"
+      content="Agenda de contactos desarrollada en Spring Boot"
+    />
+    <meta name="robots" content="index, follow" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>¡My Contact List!</title>
+    <link rel="shortcut icon" href="/titleImg.ico">
+  </head>
+
+  <body class="container py-5">
+    
+    <div class="p-5 bg-light rounded shadow mb-5"
+      style="background: url('/opc2.svg') no-repeat right; background-size: contain;" >
+        <h1 class="text-primary display-5">¡Wellcome to <b>MyContactList</b>!</h1>
+        <p class="fw-bold mt-3">App to manage your contact list </p>
+        <p>Create, consult, modify or delete your contacts. ¡All in one app!</p>
+    </div>
+
+    <h2>My contacts</h2>
+    <span>By: <b>DevJuan</b></span>
+
+    <div
+      class="alert alert-success alert-dismissible mt-3"
+      th:if="${msgExito ne null}"
+    >
+      [[${msgExito}]]
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="text-end">
+      <a href="/createContact" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Add contact
+      </a>
+    </div>
+    
+    <form action="" method="get" autocomplete="off">
+      <div class="row">
+        <div class="col-lg-3 col-md-4">
+          <div class="input-group mb-3">
+        
+            <button class="btn btn-primary" type="submit" id="button-addon1">
+              <i class="fa fa-search"></i>
+            </button>
+          <!--
+            En el input de aquí abajo el atributo de Thymeleaf th:value me sirve para que al momento de presionar enter
+            para hacer un filtro, los datos del input no se borren sino que se mantengan. 
+          -->
+            <input type="text" name="searchName" class="form-control" placeholder="Search by name" th:value="${param.searchName}" />
+        
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Cellphone</th>
+          <th>Email</th>
+          <th>Date of Birth</th>
+          <th>Last update</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="contact : ${contactsPage}" th:object="${contact}">
+          <td th:text="*{id}"></td>
+          <td th:text="*{fullname}"></td>
+          <td th:text="*{cellphone}"></td>
+          <td th:text="*{email}"></td>
+          <td th:text="*{#temporals.format(birthday, 'dd/MM/YYYY')}"></td>
+          <td
+            th:text="*{#temporals.format(lastUpdate, 'dd/MM/YYYY hh:mm a')}"
+          ></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a th:href="@{/{id}/edit(id=*{id})}" class="btn btn-primary">
+                <i class="fa fa-edit"></i>
+              </a>
+
+              <button
+                href=""
+                class="btn btn-danger"
+                onclick="deleteContact(this)"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+
+              <form th:action="@{/{id}/delete(id=*{id})}" method="post"></form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div sd:pagination-summary=""></div>
+      </div>
+
+      <div class="col-sm-6">
+        <nav class="pull-right">
+          <ul class="pagination" sd:pagination="full"></ul>
+        </nav>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      function deleteContact(element) {
+        let ok = confirm("Do you want to delete this contact?");
+
+        if (ok) {
+          element.nextElementSibling.submit();
+        }
+      }
+    </script>
+  </body>
+</html>
